@@ -1,6 +1,5 @@
 # CLI Framework Evaluation for radosgw-admin
 
-**Date:** 2026-03-19
 **Purpose:** GSoC proposal research - selecting a C++ CLI framework to replace manual arg parsing
 
 ---
@@ -25,15 +24,14 @@
 
 | Criterion | Result |
 |-----------|--------|
-| Maturity & maintenance | Yes -- actively maintained (2024 releases), used in CMake itself |
-| Header-only | Yes -- single `CLI11.hpp` header |
-| Nested command hierarchies | Yes -- `add_subcommand()` with unlimited nesting |
-| Auto usage/help generation | Yes -- full auto-generated help with descriptions |
-| Per-command `--help` | Yes -- `radosgw-admin bucket --help` works out of the box |
-| Per-command arg declarations | Yes -- each subcommand declares its own options; auto error messages |
-| List verbs on unknown input | Yes -- suggests similar commands on unknown subcommand |
-| C++ standard | C++11 minimum |
-| License compat with LGPL | Yes -- BSD-3-Clause is compatible |
+| Maturity & maintenance | Yes - actively maintained (2024 releases), used in CMake itself |
+| Header-only | Yes - single `CLI11.hpp` header |
+| Nested command hierarchies | Yes - `add_subcommand()` with unlimited nesting |
+| Auto usage/help generation | Yes - full auto-generated help with descriptions |
+| Per-command `--help` | Yes - `radosgw-admin bucket --help` works out of the box |
+| Per-command arg declarations | Yes - each subcommand declares its own options; auto error messages |
+| List verbs on unknown input | Yes - suggests similar commands on unknown subcommand |
+| License compat with LGPL | Yes - BSD-3-Clause is compatible |
 
 Sample code for radosgw-admin:
 ```cpp
@@ -60,15 +58,14 @@ Best fit for this project.
 
 | Criterion | Result |
 |-----------|--------|
-| Maturity & maintenance | Yes -- very mature (Boost 1.32+), stable |
-| Header-only | No -- requires compiled Boost libraries |
-| Nested command hierarchies | No -- no native subcommand support, manual workaround needed |
-| Auto usage/help generation | Partial -- auto-generates option list but not command hierarchy |
-| Per-command `--help` | No -- requires manual implementation per command |
-| Per-command arg declarations | Partial -- options declared globally, not per-command |
+| Maturity & maintenance | Yes - very mature (Boost 1.32+), stable |
+| Header-only | No - requires compiled Boost libraries |
+| Nested command hierarchies | No - no native subcommand support, manual workaround needed |
+| Auto usage/help generation | Partial - auto-generates option list but not command hierarchy |
+| Per-command `--help` | No - requires manual implementation per command |
+| Per-command arg declarations | Partial - options declared globally, not per-command |
 | List verbs on unknown input | No |
-| C++ standard | C++11 |
-| License compat with LGPL | Yes -- Boost License compatible |
+| License compat with LGPL | Yes - Boost License compatible |
 
 Not suitable. Already in Ceph but lacks subcommand support, which is the core need. Would require significant manual scaffolding.
 
@@ -81,15 +78,14 @@ Not suitable. Already in Ceph but lacks subcommand support, which is the core ne
 
 | Criterion | Result |
 |-----------|--------|
-| Maturity & maintenance | Partial -- maintained but low activity |
-| Header-only | Yes -- single `args.hxx` header |
-| Nested command hierarchies | Yes -- subcommand support via `Subparser` |
+| Maturity & maintenance | Partial - maintained but low activity |
+| Header-only | Yes - single `args.hxx` header |
+| Nested command hierarchies | Yes - subcommand support via `Subparser` |
 | Auto usage/help generation | Yes |
-| Per-command `--help` | Partial -- requires manual setup |
+| Per-command `--help` | Partial - requires manual setup |
 | Per-command arg declarations | Yes |
 | List verbs on unknown input | Partial |
-| C++ standard | C++11 |
-| License compat with LGPL | Yes -- MIT compatible |
+| License compat with LGPL | Yes - MIT compatible |
 
 Acceptable but weaker than CLI11. Less active, smaller community.
 
@@ -102,15 +98,14 @@ Acceptable but weaker than CLI11. Less active, smaller community.
 
 | Criterion | Result |
 |-----------|--------|
-| Maturity & maintenance | Yes -- actively maintained (2024 releases) |
-| Header-only | Yes -- single `argparse.hpp` |
-| Nested command hierarchies | Yes -- subcommand support (added in v2.x) |
+| Maturity & maintenance | Yes - actively maintained (2024 releases) |
+| Header-only | Yes - single `argparse.hpp` |
+| Nested command hierarchies | Yes - subcommand support (added in v2.x) |
 | Auto usage/help generation | Yes |
 | Per-command `--help` | Yes |
 | Per-command arg declarations | Yes |
 | List verbs on unknown input | Partial |
-| C++ standard | C++17 minimum |
-| License compat with LGPL | Yes -- MIT compatible |
+| License compat with LGPL | Yes - MIT compatible |
 
 Good alternative. C++17 requirement is fine since Ceph now requires C++23. CLI11 still has an edge on unknown-verb listing and ecosystem maturity.
 
@@ -122,15 +117,14 @@ Good alternative. C++17 requirement is fine since Ceph now requires C++23. CLI11
 
 | Criterion | Result |
 |-----------|--------|
-| Maturity & maintenance | Partial -- mature but barely maintained (last release ~2019) |
+| Maturity & maintenance | Partial - mature but barely maintained (last release ~2019) |
 | Header-only | Yes |
 | Nested command hierarchies | No |
 | Auto usage/help generation | Yes |
 | Per-command `--help` | No |
-| Per-command arg declarations | No -- global only |
+| Per-command arg declarations | No - global only |
 | List verbs on unknown input | No |
-| C++ standard | C++98/11 |
-| License compat with LGPL | Yes -- MIT compatible |
+| License compat with LGPL | Yes - MIT compatible |
 
 Not suitable. No subcommand support, effectively abandoned.
 
@@ -158,8 +152,8 @@ Not suitable. No subcommand support, effectively abandoned.
 CLI11 scores highest on all criteria relevant to this project:
 
 1. Multi-level subcommands (`bucket stats`, `bucket check olh`) map directly to `app.add_subcommand("bucket")->add_subcommand("stats")`
-2. Header-only -- drop `CLI11.hpp` into the source tree, no build system changes
+2. Header-only - drop `CLI11.hpp` into the source tree, no build system changes
 3. Auto-generates help output, replacing the ~400-line manual `usage()` function
-4. C++11 minimum -- Ceph's main branch requires C++23 (`set(CMAKE_CXX_STANDARD 23)` in `src/CMakeLists.txt`), so all evaluated frameworks are compatible
-5. Used by CMake -- precedent for acceptance in the Ceph build ecosystem
-6. BSD-3 license -- compatible with Ceph's LGPL
+4. C++11 minimum - Ceph's main branch requires C++23 (`set(CMAKE_CXX_STANDARD 23)` in `src/CMakeLists.txt`), so all evaluated frameworks are compatible
+5. Used by CMake - precedent for acceptance in the Ceph build ecosystem
+6. BSD-3 license - compatible with Ceph's LGPL
