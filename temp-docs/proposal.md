@@ -1,15 +1,19 @@
 # GSoC 2026 Proposal: radosgw-admin UX and Documentation Improvements
 
 **Project:** radosgw-admin UX and documentation improvements
+
 **Organization:** Ceph
+
 **Mentors:** Yuval Lifshitz (ylifshit@ibm.com), Jacques Heunis (jheunis@bloomberg.net)
+
 **Project Hours:** 350
+
 **Difficulty:** Advanced
 
 ---
 
 ## About Me
-
+|||
 |---|---|
 | **Name** | Ashutosh Shaha |
 | **Email** | ashutoshbshaha30@gmail.com |
@@ -192,8 +196,9 @@ This gives:
 
 ---
 
-## Migration Strategy (Detail)
+## Migration Strategy 
 
+(I prepared this strategy with AI, still thinking on this. It would be better to finalise this post discussion with the Maintainers)
 The migration must be **incremental and backward-compatible**. At no point should existing scripts or user workflows break.
 
 ### Approach: Parallel Parsing with Gradual Cutover
