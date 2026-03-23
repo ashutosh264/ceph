@@ -35,19 +35,33 @@
 | C++ standard | C++11 minimum |
 | License compat with LGPL | Yes -- BSD-3-Clause is compatible |
 
-Sample code for radosgw-admin:
+Sample code for radosgw-admin (using per-command parameter structs to constrain callback access):
 ```cpp
 CLI::App app{"radosgw-admin -- Ceph Object Gateway admin tool"};
 
+struct BucketStatsParams {
+    std::string bucket_name;
+    std::string uid;
+};
+
+BucketStatsParams bsp;
 auto bucket = app.add_subcommand("bucket", "Bucket management commands");
 auto bucket_stats = bucket->add_subcommand("stats", "Return bucket statistics");
-bucket_stats->add_option("--bucket", bucket_name, "Bucket name")->required();
-bucket_stats->add_option("--uid", uid, "User ID");
+bucket_stats->add_option("--bucket", bsp.bucket_name, "Bucket name")->required();
+bucket_stats->add_option("--uid", bsp.uid, "User ID");
+bucket_stats->callback([&bsp]() { handle_bucket_stats(bsp); });
 
+struct UserCreateParams {
+    std::string uid;
+    std::string display_name;
+};
+
+UserCreateParams ucp;
 auto user = app.add_subcommand("user", "User management commands");
 auto user_create = user->add_subcommand("create", "Create a new user");
-user_create->add_option("--uid", uid, "User ID")->required();
-user_create->add_option("--display-name", display_name, "Display name")->required();
+user_create->add_option("--uid", ucp.uid, "User ID")->required();
+user_create->add_option("--display-name", ucp.display_name, "Display name")->required();
+user_create->callback([&ucp]() { handle_user_create(ucp); });
 ```
 
 Best fit for this project.

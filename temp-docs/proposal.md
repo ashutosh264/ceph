@@ -129,12 +129,20 @@ Proposed CLI11 pattern:
 ```cpp
 CLI::App app{"radosgw-admin -- Ceph Object Gateway admin tool"};
 
+struct UserCreateParams {
+    std::string uid;
+    std::string display_name;
+};
+
+UserCreateParams ucp;
 auto user = app.add_subcommand("user", "User management commands");
 auto user_create = user->add_subcommand("create", "Create a new user");
-user_create->add_option("--uid", uid, "User ID")->required();
-user_create->add_option("--display-name", display_name, "Display name")->required();
-user_create->callback([&]() { handle_user_create(uid, display_name); });
+user_create->add_option("--uid", ucp.uid, "User ID")->required();
+user_create->add_option("--display-name", ucp.display_name, "Display name")->required();
+user_create->callback([&ucp]() { handle_user_create(ucp); });
 ```
+
+Each command gets its own parameter struct, and the callback captures only that struct. This constrains the callback to only access parameters that were explicitly declared on the CLI11 command. If a developer accidentally references a parameter that belongs to a different command, it is a compile-time error rather than a silent documentation mismatch. This design makes it as difficult as reasonably possible for the documentation (auto-generated from CLI11 declarations) to diverge from observed behavior.
 
 This gives:
 - `radosgw-admin --help` lists all top-level commands
@@ -183,6 +191,7 @@ This gives:
 ### Phase 5: Polish and Edge Cases (Weeks 16-17, ~30 hours)
 - Handle edge cases: commands with hyphens vs spaces (`role-trust-policy` vs `role trust policy`), backward-compat aliases
 - Ensure the "Expected one of the following" behavior on unknown verbs works identically to today
+- Add tests verifying that unexpected/unrecognized arguments emit a warning to stderr but do not prevent command execution, ensuring backward compatibility for existing scripts that may pass flags not registered for the specific command being invoked
 - Performance: verify no measurable overhead from CLI11 parsing
 
 ### Buffer (Week 18, ~20 hours)
@@ -214,6 +223,7 @@ Phase 3:  CLI11 parses + declares all args → direct callbacks (getopt removed)
 
 - All existing command strings continue to work (e.g., `radosgw-admin bucket stats --bucket=foo`)
 - Both `--option=value` and `--option value` forms are supported (CLI11 handles both natively)
+- Unexpected or unrecognized arguments emit a warning but do not prevent command execution, so existing scripts that pass flags not specific to the invoked command continue to work
 - Exit codes and error message formats are preserved where possible
 - The `help.t` test file serves as the regression baseline
 
