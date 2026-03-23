@@ -1,6 +1,5 @@
-# radosgw-admin Documentation Audit
+# Documentation Audit of radosgw-admin
 
-**Date:** 2026-03-19
 **Sources compared:**
 - Source code: `src/rgw/radosgw-admin/radosgw-admin.cc` (usage() function, lines 140-557)
 - Man page: `doc/man/8/radosgw-admin.rst`
